@@ -1,4 +1,8 @@
 // ==UserScript==
+// @name           Tumblr Savior for Greasemonkey
+// @version        0.4.7
+// @namespace      codeman38
+// @description    Saves you from ever having to see another post about certain things ever again. Forked by codeman38 from the most recent Chrome extension to be more immediately usable with Greasemonkey.
 // @include        http://www.tumblr.com/*
 // @exclude        http://www.tumblr.com/blog/*
 // @exclude        http://www.tumblr.com/upload/*
@@ -6,25 +10,22 @@
 // @exclude        http://www.tumblr.com/inbox
 // ==/UserScript==
 
-var defaultSettings = {
-	'version': '0.4.7',
+var settings = {
 	'listBlack': ['iphone', 'ipad'],
 	'listWhite': ['bjorn', 'octopus'],
-	'hide_source': true,
+	'hide_source': false,
 	'show_notice': true,
 	'show_words': true,
 	'match_words': false,
 	'promoted_tags': false,
 	'promoted_posts': false,
-	'context_menu': true,
-	'toolbar_butt': true,
 	'white_notice': false,
 	'black_notice': false,
 	'hide_pinned': false,
-	'auto_unpin': true,
+	'auto_unpin': false,
 	'show_tags': false,
 	'hide_premium': true
-}; //initialize default values.
+};
 
 var invalidTumblrURLs = [
 	'http://www.tumblr.com/upload/*',
@@ -33,7 +34,6 @@ var invalidTumblrURLs = [
 	'http://www.tumblr.com/inbox/*'
 ]; // Don't run tumblr savior on these pages.
 
-var settings = {};
 var gotSettings = false;
 var manuallyShown = {};
 var isTumblrSaviorRunning = false;
@@ -711,113 +711,6 @@ function waitForPosts() {
 	}
 }
 
-
-function safariMessageHandler(event) {
-	var savedSettings;
-
-	if (event.name === "refreshSettings") {
-		safari.self.tab.dispatchMessage("getSettings");
-		return;
-	}
-
-	savedSettings = event.message;
-	settings = parseSettings(savedSettings);
-	applySettings();
-	waitForPosts();
-}
-
-function safariContextMenuHandler(event) {
-	var sel;
-
-	sel = window.parent.getSelection().toString();
-	sel = sel.replace(/[\r\n]/g, ' ');
-	sel = sel.replace(/^\s+|\s+$/g, '');
-
-	if (sel.length > 0) {
-		safari.self.tab.setContextMenuEventUserInfo(event, sel);
-	}
-}
-
-function chromeHandleMessage(event) {
-	if (!event) {
-		return console.error('There seems to be something wrong with Tumblr Savior.');
-	}
-
-	var savedSettings;
-
-	savedSettings = event.data;
-	settings = parseSettings(savedSettings);
-
-	applySettings();
-	waitForPosts();
-}
-
-function operaHandleMessage(event) {
-	var savedSettings;
-
-	if (event.data === "refreshSettings" || event.data === "addToBlackList") {
-		opera.extension.postMessage("getSettings");
-		return;
-	}
-
-	if (event.data.topic === 'duplicate') {
-		alert(event.data.data + ' is already on your black list.');
-		return;
-	}
-
-	if (event.data.topic === "settings") {
-		savedSettings = event.data.data;
-		settings = parseSettings(savedSettings);
-	}
-
-	applySettings();
-	waitForPosts();
-}
-
-function firefoxMessageHandler(data) {
-	var savedSettings;
-
-	savedSettings = data;
-	settings = parseSettings(savedSettings);
-
-	applySettings();
-	waitForPosts();
-}
-
-function initializeTumblrSavior() {
-	if (window.chrome !== undefined) {
-		if (chrome.extension.onMessage !== undefined) {
-			chrome.extension.onMessage.addListener(
-				function (request) {
-					if (request === "refreshSettings") {
-						chrome.extension.sendMessage(null, 'getSettings', chromeHandleMessage);
-					}
-				}
-			);
-			chrome.extension.sendMessage(null, 'getSettings', chromeHandleMessage);
-		} else if (chrome.extension.onRequest !== undefined) {
-			chrome.extension.onRequest.addListener(
-				function (request) {
-					if (request === "refreshSettings") {
-						chrome.extension.sendRequest('getSettings', chromeHandleMessage);
-					}
-				}
-			);
-			chrome.extension.sendRequest('getSettings', chromeHandleMessage);
-		}
-	} else if (window.opera !== undefined) {
-		opera.extension.onmessage = operaHandleMessage;
-		opera.extension.postMessage('getSettings');
-	} else if (window.safari !== undefined) {
-		window.addEventListener("contextmenu", safariContextMenuHandler, false);
-		safari.self.addEventListener('message', safariMessageHandler, false);
-		safari.self.tab.dispatchMessage('getSettings');
-	} else { // We must be firefox.
-		self.on('message', firefoxMessageHandler);
-		self.postMessage('getSettings');
-	}
-}
-
 function checkurl(url, filter) {
 	var filterRegex, re, f;
 
@@ -832,5 +725,5 @@ function checkurl(url, filter) {
 }
 
 if (!checkurl(window.location.href, invalidTumblrURLs)) {
-	initializeTumblrSavior();
+	waitForPosts();
 }
