@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Tumblr Savior for Greasemonkey
-// @version        0.4.7.1
+// @version        0.4.7.2
 // @namespace      codeman38
 // @description    Saves you from ever having to see another post about certain things ever again. Forked by codeman38 from the most recent Chrome extension to be more immediately usable with Greasemonkey and to add support for logical 'and' operations.
 // @include        http://www.tumblr.com/*
@@ -401,7 +401,7 @@ function handleReveal(e) {
 
 	searchUp = e.target;
 
-	while (searchUp.tagName !== "LI") {
+	while (searchUp.tagName !== "LI" || searchUp.tagName == "A") {
 		searchUp = searchUp.parentNode;
 	}
 
@@ -528,6 +528,8 @@ function checkPost(post) {
 			li_notice.addEventListener("click", handleReveal, false);
 
 			a_reveal.appendChild(i_reveal);
+			// List items still aren't keyboard-focusable. This should help with that.
+			a_reveal.addEventListener("click", handleReveal, false);
 
 			div_sentence.appendChild(a_reveal);
 
