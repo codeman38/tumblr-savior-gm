@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Tumblr Savior for Greasemonkey
-// @version        0.4.7.3
+// @version        0.4.7.4
 // @namespace      codeman38
 // @description    Saves you from ever having to see another post about certain things ever again. Forked by codeman38 from the most recent Chrome extension to be more immediately usable with Greasemonkey and to add support for logical 'and' operations.
 // @include        http://www.tumblr.com/*
@@ -675,6 +675,48 @@ function wireupnodes() {
 	document.addEventListener('MSAnimationStart', handlePostInserted, false);
 	document.addEventListener('webkitAnimationStart', handlePostInserted, false);
 	document.addEventListener('OAnimationStart', handlePostInserted, false);
+
+	var cssRules = [];
+
+	cssRules[0]  = "@keyframes nodeInserted {";
+	cssRules[0] += "    from { clip: rect(1px, auto, auto, auto); }";
+	cssRules[0] += "    to { clip: rect(0px, auto, auto, auto); }";
+	cssRules[0] += "}";
+
+	cssRules[1]  = "@-moz-keyframes nodeInserted {";
+	cssRules[1] += "    from { clip: rect(1px, auto, auto, auto); }";
+	cssRules[1] += "    to { clip: rect(0px, auto, auto, auto); }";
+	cssRules[1] += "}";
+
+	cssRules[2]  = "@-webkit-keyframes nodeInserted {";
+	cssRules[2] += "    from { clip: rect(1px, auto, auto, auto); }";
+	cssRules[2] += "    to { clip: rect(0px, auto, auto, auto); }";
+	cssRules[2] += "}";
+
+	cssRules[3]  = "@-ms-keyframes nodeInserted {";
+	cssRules[3] += "    from { clip: rect(1px, auto, auto, auto); }";
+	cssRules[3] += "    to { clip: rect(0px, auto, auto, auto); }";
+	cssRules[3] += "}";
+
+	cssRules[4]  = "@-o-keyframes nodeInserted {";
+	cssRules[4] += "    from { clip: rect(1px, auto, auto, auto); }";
+	cssRules[4] += "    to { clip: rect(0px, auto, auto, auto); }";
+	cssRules[4] += "}";
+
+	cssRules[5]  = "li.post_container div.post, li.post {";
+	cssRules[5] += "    animation-duration: 1ms;";
+	cssRules[5] += "    -o-animation-duration: 1ms;";
+	cssRules[5] += "    -ms-animation-duration: 1ms;";
+	cssRules[5] += "    -moz-animation-duration: 1ms;";
+	cssRules[5] += "    -webkit-animation-duration: 1ms;";
+	cssRules[5] += "    animation-name: nodeInserted;";
+	cssRules[5] += "    -o-animation-name: nodeInserted;";
+	cssRules[5] += "    -ms-animation-name: nodeInserted;";
+	cssRules[5] += "    -moz-animation-name: nodeInserted;";
+	cssRules[5] += "    -webkit-animation-name: nodeInserted;";
+	cssRules[5] += "}";
+
+	addGlobalStyle("wires", cssRules);
 }
 
 function checkPosts() {
