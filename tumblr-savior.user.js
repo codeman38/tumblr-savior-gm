@@ -2,7 +2,7 @@
 // @name           Tumblr Savior for Greasemonkey
 // @version        0.4.7
 // @namespace      codeman38
-// @description    Saves you from ever having to see another post about certain things ever again. Forked by codeman38 from the most recent Chrome extension to be more immediately usable with Greasemonkey.
+// @description    Saves you from ever having to see another post about certain things ever again. Forked by codeman38 from the most recent Chrome extension to be more immediately usable with Greasemonkey and to add support for logical 'and' operations.
 // @include        http://www.tumblr.com/*
 // @exclude        http://www.tumblr.com/blog/*
 // @exclude        http://www.tumblr.com/upload/*
@@ -11,10 +11,11 @@
 // ==/UserScript==
 
 var settings = {
-	'listBlack': ['iphone', 'ipad'],
-	'listWhite': ['bjorn', 'octopus'],
+	'listBlack': ['survey', 'george wendt&beans'],
+	'listWhite': ['animaniacs', 'pinky&brain'],
 	'hide_source': false,
 	'show_notice': true,
+	'logical_and': true,
 	'show_words': true,
 	'match_words': false,
 	'promoted_tags': false,
@@ -55,35 +56,70 @@ function needstobesaved(theStr) {
 
 	if (settings.match_words) {
 		for (i = 0; i < whiteList.length; i++) {
-			filterRegex = '(^|\\W)(' + whiteList[i].toLowerCase().replace(/\?/g, "\\?").replace(/\)/g, "\\)").replace(/\(/g, "\\(").replace(/\[/g, "\\[").replace(/\x2a/g, "(\\w*?)") + ')(\\W|$)';
-			re = new RegExp(filterRegex);
-			if (theStr.match(re)) {
+			spl = splitAnd(whiteList[i], settings.logical_and);
+			matched = true;
+			for (j = 0; j < spl.length; j++) {
+				filterRegex = '(^|\\W)(' + spl[j].toLowerCase().replace(/\?/g, "\\?").replace(/\)/g, "\\)").replace(/\(/g, "\\(").replace(/\[/g, "\\[").replace(/\x2a/g, "(\\w*?)") + ')(\\W|$)';
+				re = new RegExp(filterRegex);
+				if (!theStr.match(re)) {
+					matched = false;
+				}
+			}
+			if (matched) {
 				rO.wL.push(whiteList[i]);
 			}
 		}
 
 		for (i = 0; i < blackList.length; i++) {
-			filterRegex = '(^|\\W)(' + blackList[i].toLowerCase().replace(/\?/g, "\\?").replace(/\)/g, "\\)").replace(/\(/g, "\\(").replace(/\[/g, "\\[").replace(/\x2a/g, "(\\w*?)") + ')(\\W|$)';
-			re = new RegExp(filterRegex);
-			if (theStr.match(re)) {
+			spl = splitAnd(blackList[i], settings.logical_and);
+			matched = true;
+			for (j = 0; j < spl.length; j++) {
+				filterRegex = '(^|\\W)(' + spl[j].toLowerCase().replace(/\?/g, "\\?").replace(/\)/g, "\\)").replace(/\(/g, "\\(").replace(/\[/g, "\\[").replace(/\x2a/g, "(\\w*?)") + ')(\\W|$)';
+				re = new RegExp(filterRegex);
+				if (!theStr.match(re)) {
+					matched = false;
+				}
+			}
+			if (matched) {
 				rO.bL.push(blackList[i]);
 			}
 		}
 	} else {
 		for (i = 0; i < whiteList.length; i++) {
-			if (theStr.indexOf(whiteList[i].toLowerCase()) >= 0) {
+			spl = splitAnd(whiteList[i], settings.logical_and);
+			matched = true;
+			for (j = 0; j < spl.length; j++) {
+				if (theStr.indexOf(spl[j].toLowerCase()) < 0) {
+					matched = false;
+				}
+			}
+			if (matched) {
 				rO.wL.push(whiteList[i]);
 			}
 		}
 
 		for (i = 0; i < blackList.length; i++) {
-			if (theStr.indexOf(blackList[i].toLowerCase()) >= 0) {
+			spl = splitAnd(blackList[i], settings.logical_and);
+			matched = true;
+			for (j = 0; j < spl.length; j++) {
+				if (theStr.indexOf(spl[j].toLowerCase()) < 0) {
+					matched = false;
+				}
+			}
+			if (matched) {
 				rO.bL.push(blackList[i]);
 			}
 		}
 	}
 
 	return rO;
+}
+
+function splitAnd(item, doSplit) {
+	if (doSplit)
+		return item.split("&");
+	else
+		return new Array(item);
 }
 
 function addGlobalStyle(styleID, newRules) {
