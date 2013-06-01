@@ -12,9 +12,13 @@ Here's what's different from the browser-extension version of Tumblr Savior ([bi
 
 * It actually works outside the context of the browser extension-- in fact, some of the extension-specific code has been eliminated.
 
-* CSS transition effects on hidden posts are disabled, because they've been known to bog things down on some machines-- and because they don't work with the new Tumblr layout anyway, besides.
-
 * As in my previous "Tumblr Savior With A Fork In It", it's possible to include a logical 'and' operator by using an ampersand within a blacklist/whitelist string. (For instance, adding "george wendt&beans" to the blacklist will only block posts containing both "george wendt" and "beans".)
+
+* The link to unhide a post can now be activated via the keyboard, for non-mouse users.
+
+* Keyboard navigation using the 'j' and 'k' keys is no longer broken when a post is hidden.
+
+* A new option, 'hide_own_posts', has been added to the settings object; if set to true, this will cause the blacklist and whitelist to apply to posts that you've made as well as others' posts.
 
 ## Why use this version instead?
 
@@ -23,6 +27,10 @@ Here's what's different from the browser-extension version of Tumblr Savior ([bi
 * Because the version bundled in the browser extension isn't lightweight *enough* for some people.
 
 * Because the original can't do logical 'and' operations on keywords.
+
+* Because you're a frequent keyboard user.
+
+* Because you're triggered by something that you yourself have posted about.
 
 ## How do I install it?
 
