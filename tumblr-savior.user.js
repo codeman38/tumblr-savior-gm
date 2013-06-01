@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Tumblr Savior for Greasemonkey
-// @version        0.4.7.4
+// @version        0.4.7.5
 // @namespace      codeman38
 // @description    Saves you from ever having to see another post about certain things ever again. Forked by codeman38 from the most recent Chrome extension to be more immediately usable with Greasemonkey and to add support for logical 'and' operations.
 // @include        http://www.tumblr.com/*
@@ -16,6 +16,7 @@ var settings = {
 	'hide_source': false,
 	'show_notice': true,
 	'logical_and': true,
+	'hide_own_posts': false,
 	'show_words': true,
 	'match_words': false,
 	'promoted_tags': false,
@@ -417,7 +418,7 @@ function handleReveal(e) {
 function checkPost(post) {
 	var olPosts, liPost, bln, wln, liRemove, n, savedfrom, author, li_notice, a_avatar, img_avatar, nipple_border, nipple, a_author, txtPosted, txtContents, j, br, a_reveal, i_reveal, span_notice_tags, span_tags, divRating, imgRating, spanWhitelisted, spanBlacklisted, anchors, a, remove, ribbon_right, ribbon_left;
 
-	if (post.className.indexOf('not_mine') < 0) {
+	if (post.className.indexOf('not_mine') < 0 && !settings.hide_own_posts) {
 		return;
 	}
 
