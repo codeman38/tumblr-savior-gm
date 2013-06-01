@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Tumblr Savior for Greasemonkey
-// @version        0.4.7.2
+// @version        0.4.7.3
 // @namespace      codeman38
 // @description    Saves you from ever having to see another post about certain things ever again. Forked by codeman38 from the most recent Chrome extension to be more immediately usable with Greasemonkey and to add support for logical 'and' operations.
 // @include        http://www.tumblr.com/*
@@ -42,6 +42,7 @@ var inProgress = {};
 var icon = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAnNJREFUeNqMU09M02AU/8awC5vJsu2g4ExwkDgJQzfCEsWEgQxI1CVLvHDadYNE9IAm84KJ3EBPBjGe0ETw6AXmwRBPXhjTkjCTicvC+FPKZC1tt7brs1/JcIMY92val+977/3e7/v6HgIAVAtMJpPR4XA463Q6XeV+/f8SbTbbWY/bfT0QCAQpitI/m5wMV/p1WEElqcFgQFc7Ojq9Xm+Pt6vL53K5blxqbraZrVb0ZXk529Pbaz+loLHx/LmhwaHbnk5Pj/ua+2ZrS4vDpiYoiqKRK6AgmqJQU1OTiSCIelEU5WMGrODR+HhUtcCzLGxns3CYz4PAccCp63dzc/Di+TTs03s4BG719Q1UKqjDH5qmD7Cl9igE6rMUi6GJpxPoTuAu+pVOI5Ik0T5NawmRcHi06pKwgra2K66SLIEsiZBYjcOTaBRez87i3wNrJKlVpnZ3oAy73X6xigDjW2I1hZ07W1vAq/IxfD4fDA8Pw0m8mpl5c4pgdGTk/snAT7EYGI1GyGQy2rpQLGpWkiSwWiyWKgK9Xt/AsuwhDiiVSsckOMTv90OhUABeEIA5CoEHY2MPjy8R56tJwvTU1Eu8KBZFbTOZTKJgMIi6u7sRw7JIEiXE87zm6x8YvKcW1ZcVELipzGZzq8ALJVmW4fdBHtbXkyAIBa2irIqSlb/HI8m1PbW9G8qtLGEV+Xw+tfBh4XMoFOo/QxDI6bx8dEz1XY2vbDMMQ8Xj8ZVEIv41lfr5g+M4oUyAY7Tu+q4CK0xvbDCbm5sbuVxua37+/dulxcWPoiTxp4bl5DS2t7d3RcKRx1ar5UItU6qrdZz/hT8CDADaR5pMovP3DQAAAABJRU5ErkJggg==";
 var whiteListed = {};
 var blackListed = {};
+var hiddenPosts = {};
 
 function needstobesaved(theStr) {
 	var blackList, whiteList, rO, i, filterRegex, re;
@@ -405,9 +406,11 @@ function handleReveal(e) {
 		searchUp = searchUp.parentNode;
 	}
 
-	searchUp.previousSibling.style.display = "list-item";
-	searchUp.style.display = "none";
-	manuallyShown[searchUp.id.replace('notification_','')] = true;
+	postId = searchUp.id.replace('notification_','');
+	theList = searchUp.parentNode;
+	theList.insertBefore(hiddenPosts[postId], searchUp);
+	theList.removeChild(searchUp);
+	manuallyShown[postId] = true;
 }
 
 
@@ -555,7 +558,8 @@ function checkPost(post) {
 				olPosts.appendChild(li_notice);
 			}
 		}
-		liPost.style.display = 'none';
+		hiddenPosts[post.id] = liPost;
+		olPosts.removeChild(liPost);
 	} else if (liPost.style.display === 'none' && liPost.className.indexOf('tumblr_hate') < 0) {
 		liPost.style.display = 'list-item';
 		if (settings.show_notice) {
