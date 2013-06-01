@@ -24,3 +24,6 @@ Here's what's different from the browser-extension version of Tumblr Savior ([bi
 
 * Because the original can't do logical 'and' operations on keywords.
 
+## How do I install it?
+
+[Just follow this link right here!](https://raw.github.com/codeman38/tumblr-savior-gm/master/tumblr-savior.user.js) Then be sure to modify the default settings of 'listBlack' and 'listWhite' to something that's a bit more useful and a bit less of a fandom in-joke.
