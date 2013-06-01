@@ -401,7 +401,7 @@ function handleReveal(e) {
 
 	searchUp = e.target;
 
-	while (searchUp.tagName !== "LI" || searchUp.tagName == "A") {
+	while (searchUp.tagName !== "LI") {
 		searchUp = searchUp.parentNode;
 	}
 
