@@ -12,7 +12,7 @@ Here's what's different from the browser-extension version of Tumblr Savior ([bi
 
 * It actually works outside the context of the browser extension-- in fact, some of the extension-specific code has been eliminated.
 
-* CSS transition effects are disabled by default, because it's been known to bog things down on some machines.
+* CSS transition effects on hidden posts are disabled, because they've been known to bog things down on some machines-- and because they don't work with the new Tumblr layout anyway, besides.
 
 * As in my previous "Tumblr Savior With A Fork In It", it's possible to include a logical 'and' operator by using an ampersand within a blacklist/whitelist string. (For instance, adding "george wendt&beans" to the blacklist will only block posts containing both "george wendt" and "beans".)
 
