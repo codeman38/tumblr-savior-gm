@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name           Tumblr Savior for Greasemonkey
-// @version        0.4.7.5
+// @version        0.4.7.6
 // @namespace      codeman38
 // @description    Saves you from ever having to see another post about certain things ever again. Forked by codeman38 from the most recent Chrome extension to be more immediately usable with Greasemonkey and to add support for logical 'and' operations.
-// @include        http://www.tumblr.com/*
-// @exclude        http://www.tumblr.com/blog/*
-// @exclude        http://www.tumblr.com/upload/*
-// @exclude        http://www.tumblr.com/inbox/*
-// @exclude        http://www.tumblr.com/inbox
+// @include        /^https?://www\.tumblr\.com//
+// @exclude        /^https?://www\.tumblr\.com/blog//
+// @exclude        /^https?://www\.tumblr\.com/upload//
+// @exclude        /^https?://www\.tumblr\.com/inbox//
+// @exclude        /^https?://www\.tumblr\.com/inbox$/
 // ==/UserScript==
 
 var settings = {
